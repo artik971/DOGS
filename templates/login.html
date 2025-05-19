@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>ATP/3 4Tb</h1>
+        <p>0-1M PABU Tb</p>
+        <form action="/login" method="post">
+            <input type="text" name="username" placeholder="Логин" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit">Войти</button>
+        </form>
+        <button onclick="window.location.href='/register'">Регистрация</button>
+    </div>
+</body>
+</html>

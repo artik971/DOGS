@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Главная</h1>
+        <button onclick="window.location.href='/logout'">Выйти</button>
+        <button onclick="window.location.href='/camera'">Сделать фото</button>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="photo" accept="image/*" required>
+            <button type="submit">Загрузить фото</button>
+        </form>
+        <img id="displayed_image" src="{{ image_url }}" alt="Загруженное изображение">
+    </div>
+</body>
+</html>
