@@ -4,18 +4,194 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        @keyframes pawAnimation {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.02); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        @keyframes wag {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-image: url("{{ url_for('static', filename='задний фон.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background-color: rgba(255, 253, 245, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(139, 69, 19, 0.5);
+            border: 3px dashed #8B4513;
+
+            max-width: 800px;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #8B4513;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+            font-size: 2.5em;
+        }
+
+        button {
+            background-color: #8B4513;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 15px 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(139, 69, 19, 0.3);
+            min-width: 200px;
+        }
+
+        button:hover {
+            background-color: #A0522D;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(139, 69, 19, 0.4);
+            animation: bounce 0.5s;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button::after {
+            content: '🐾';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        button:hover::after {
+            opacity: 1;
+            top: -5px;
+            right: -5px;
+        }
+
+        .dog-paw {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.6;
+            animation: float 6s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        #displayed_image {
+            max-width: 100%;
+            border-radius: 15px;
+            border: 3px solid #8B4513;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+            transition: transform 0.3s;
+        }
+
+        #displayed_image:hover {
+            transform: scale(1.02);
+        }
+
+        .file-input-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            background-color: #A0522D;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(139, 69, 19, 0.3);
+        }
+
+        .file-input-label:hover {
+            background-color: #8B4513;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(139, 69, 19, 0.4);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .dog-tail {
+            font-size: 40px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            animation: wag 1s infinite;
+        }
+    </style>
 </head>
 <body>
+    <!-- Плавающие следы лап -->
+    <div class="dog-paw" style="top:10%; left:5%;">🐾</div>
+    <div class="dog-paw" style="top:90%; left:10%; animation-delay:1s;">🐾</div>
+    <div class="dog-paw" style="top:20%; left:90%; animation-delay:2s;">🐾</div>
+    <div class="dog-paw" style="top:80%; left:85%; animation-delay:3s;">🐾</div>
+
     <div class="container">
-        <h1>Главная</h1>
-        <button onclick="window.location.href='/logout'">Выйти</button>
-        <button onclick="window.location.href='/camera'">Сделать фото</button>
+        <div class="dog-tail">🐕</div>
+        <h1>Главная страница 🐶</h1>
+
+        <button onclick="window.location.href='/logout'">Выйти 🚪</button>
+        <button onclick="window.location.href='/camera'">Сделать фото 📸</button>
+
         <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="photo" accept="image/*" required>
-            <button type="submit">Загрузить фото</button>
+            <div class="file-input-container">
+                <label for="photo-upload" class="file-input-label">Загрузить фото 🖼️</label>
+                <input id="photo-upload" type="file" name="photo" accept="image/*" required>
+            </div>
+
         </form>
+
+        {% if image_url %}
         <img id="displayed_image" src="{{ image_url }}" alt="Загруженное изображение">
+        {% else %}
+        <div style="margin: 20px; padding: 20px; background-color: #FFF8DC; border-radius: 15px; border: 2px dashed #8B4513;">
+            <p style="color: #8B4513; font-size: 18px;">Здесь появится ваше фото 🐾</p>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>
