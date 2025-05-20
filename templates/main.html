@@ -220,13 +220,12 @@
 
     <div class="container">
         <div class="dog-tail">🐕</div>
-                <h1>Главная страница 🐶</h1>
-        <!-- Приветственное сообщение -->
+        <h1>Главная страница 🐶</h1>
+
         <div class="welcome-message">
             {{ welcome_message }}
         </div>
 
-        <!-- Всплывающие сообщения -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -237,7 +236,7 @@
             {% endif %}
         {% endwith %}
 
-
+        <button onclick="window.location.href='/logout'">Выйти 🚪</button>
 
 
         <form action="/upload" method="post" enctype="multipart/form-data">
@@ -247,13 +246,12 @@
                 <button type="submit" style="display: none;" id="submit-btn"></button>
             </div>
         </form>
-        <button onclick="window.location.href='/logout'">Выйти 🚪</button>
 
         <!-- Контейнер для отображения фото -->
         <div class="image-container">
             {% if image_url %}
-                <img src="{{ image_url }}" alt="Загруженное изображение">
-                <p style="margin-top: 10px; color: #5D4037;">Фото успешно загружено! 🎉</p>
+                <img src="{{ image_url }}" alt="Последнее загруженное фото">
+                <p style="margin-top: 10px; color: #5D4037;">Последнее загруженное фото 🎉</p>
             {% else %}
                 <p style="color: #8B4513; font-size: 18px; padding: 40px 0;">Здесь появится ваше фото 🐾</p>
             {% endif %}
@@ -261,7 +259,6 @@
     </div>
 
     <script>
-        // Автоматическая отправка формы при выборе файла
         document.getElementById('photo-upload').addEventListener('change', function() {
             this.form.submit();
         });

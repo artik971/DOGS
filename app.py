@@ -42,6 +42,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 
+
 @app.route('/')
 def index():
     return redirect(url_for('login'))
@@ -110,27 +111,24 @@ def main():
     db.close()
 
     if user:
-        created_at = datetime.strptime(user['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y %H:%M')
+
         welcome_message = f"Добро пожаловать, {user['username']}! "
+    else:
+        welcome_message = f"Добро пожаловать, {session['username']}!"
 
 
     return render_template('main.html', image_url=None, welcome_message=welcome_message)
-
 
 @app.route('/logout')
 def logout():
     session.pop('username', None)
     flash('Вы успешно вышли из системы', 'info')
     return redirect(url_for('login'))
-
-
 @app.route('/camera')
 def camera():
     if 'username' not in session:
         return redirect(url_for('login'))
     return render_template('camera.html')
-
-
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'username' not in session:
@@ -158,8 +156,7 @@ def upload():
         db.close()
 
         if user:
-            created_at = datetime.strptime(user['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y %H:%M')
-            welcome_message = f"Добро пожаловать, {user['username']}! "
+            welcome_message = f"Добро пожаловать, {user['username']}!"
         else:
             welcome_message = f"Добро пожаловать, {session['username']}!"
 
