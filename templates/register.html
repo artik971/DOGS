@@ -140,11 +140,21 @@
         <div class="dog-icon">🐕</div>
         <h1>Регистрация</h1>
         <form action="/register" method="post">
-            <input type="text" name="new_username" placeholder="Ваш email" required>
+            <input type="text" name="new_username" placeholder="Никнейм" required>
             <input type="password" name="new_password" placeholder="Новый пароль" required>
             <button type="submit">Зарегистрироваться 🐶</button>
         </form>
         <button onclick="window.location.href='/login'">Назад к входу 🏠</button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
     </div>
+
 </body>
 </html>

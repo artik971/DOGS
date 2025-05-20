@@ -137,14 +137,24 @@
     <div class="dog-paw" style="top:70%; left:75%; animation-delay:3s;">🐾</div>
 
     <div class="container">
-        <h1>ATP/3 4Tb</h1>
-        <p>0-1M PABU Tb</p>
+        <h1>BreedFinder</h1>
+
         <form action="/login" method="post">
-            <input type="text" name="username" placeholder="Почта" required>
+            <input type="text" name="username" placeholder="Никнейм" required>
             <input type="password" name="password" placeholder="Пароль" required>
             <button type="submit">Войти 🐶</button>
         </form>
         <button onclick="window.location.href='/register'">Регистрация 🐕</button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
     </div>
+
 </body>
 </html>

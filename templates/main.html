@@ -50,9 +50,9 @@
             text-align: center;
             box-shadow: 0 0 25px rgba(139, 69, 19, 0.5);
             border: 3px dashed #8B4513;
-
             max-width: 800px;
             margin: 20px;
+            position: relative;
         }
 
         h1 {
@@ -113,16 +113,28 @@
             z-index: -1;
         }
 
-        #displayed_image {
+        .image-container {
             max-width: 100%;
             border-radius: 15px;
             border: 3px solid #8B4513;
-            margin-top: 20px;
+            margin: 20px auto;
             box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
             transition: transform 0.3s;
+            background-color: #FFF8DC;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
         }
 
-        #displayed_image:hover {
+        .image-container img {
+            max-width: 100%;
+            max-height: 400px;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+
+        .image-container:hover {
             transform: scale(1.02);
         }
 
@@ -161,6 +173,42 @@
             right: 20px;
             animation: wag 1s infinite;
         }
+
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+
+        .welcome-message {
+            color: #5D4037;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: rgba(255, 248, 220, 0.7);
+            border-radius: 10px;
+            border-left: 5px solid #8B4513;
+        }
     </style>
 </head>
 <body>
@@ -172,26 +220,51 @@
 
     <div class="container">
         <div class="dog-tail">🐕</div>
-        <h1>Главная страница 🐶</h1>
+                <h1>Главная страница 🐶</h1>
+        <!-- Приветственное сообщение -->
+        <div class="welcome-message">
+            {{ welcome_message }}
+        </div>
 
-        <button onclick="window.location.href='/logout'">Выйти 🚪</button>
-        <button onclick="window.location.href='/camera'">Сделать фото 📸</button>
+        <!-- Всплывающие сообщения -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+
 
         <form action="/upload" method="post" enctype="multipart/form-data">
             <div class="file-input-container">
                 <label for="photo-upload" class="file-input-label">Загрузить фото 🖼️</label>
                 <input id="photo-upload" type="file" name="photo" accept="image/*" required>
+                <button type="submit" style="display: none;" id="submit-btn"></button>
             </div>
-
         </form>
+        <button onclick="window.location.href='/logout'">Выйти 🚪</button>
 
-        {% if image_url %}
-        <img id="displayed_image" src="{{ image_url }}" alt="Загруженное изображение">
-        {% else %}
-        <div style="margin: 20px; padding: 20px; background-color: #FFF8DC; border-radius: 15px; border: 2px dashed #8B4513;">
-            <p style="color: #8B4513; font-size: 18px;">Здесь появится ваше фото 🐾</p>
+        <!-- Контейнер для отображения фото -->
+        <div class="image-container">
+            {% if image_url %}
+                <img src="{{ image_url }}" alt="Загруженное изображение">
+                <p style="margin-top: 10px; color: #5D4037;">Фото успешно загружено! 🎉</p>
+            {% else %}
+                <p style="color: #8B4513; font-size: 18px; padding: 40px 0;">Здесь появится ваше фото 🐾</p>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
+
+    <script>
+        // Автоматическая отправка формы при выборе файла
+        document.getElementById('photo-upload').addEventListener('change', function() {
+            this.form.submit();
+        });
+    </script>
 </body>
 </html>

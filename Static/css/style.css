@@ -51,3 +51,20 @@ form {
     flex-direction: column;
     align-items: center;
 }
+.alert {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+.alert-success {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+.alert-error {
+  background-color: #f2dede;
+  color: #a94442;
+}
+.alert-info {
+  background-color: #d9edf7;
+  color: #31708f;
+}

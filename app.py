@@ -1,10 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
 import sqlite3
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -62,7 +61,9 @@ def login():
             session['username'] = username
             return redirect(url_for('main'))
         else:
-            return 'Неверный логин или пароль'
+            flash('Неверный логин или пароль', 'error')
+            return redirect(url_for('login'))
+
     return render_template('login.html')
 
 
@@ -73,7 +74,8 @@ def register():
         password = request.form['new_password']
 
         if not username or not password:
-            return 'Введите логин и пароль'
+            flash('Введите логин и пароль', 'error')
+            return redirect(url_for('register'))
 
         db = get_db()
         try:
@@ -87,10 +89,12 @@ def register():
             db.commit()
             db.close()
 
+            flash('Регистрация прошла успешно! Теперь вы можете войти.', 'success')
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
             db.close()
-            return 'Пользователь уже существует'
+            flash('Пользователь уже существует', 'error')
+            return redirect(url_for('register'))
 
     return render_template('register.html')
 
@@ -107,9 +111,8 @@ def main():
 
     if user:
         created_at = datetime.strptime(user['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y %H:%M')
-        welcome_message = f"Добро пожаловать, {user['username']}! Ваш аккаунт создан {created_at}"
-    else:
-        welcome_message = f"Добро пожаловать, {session['username']}!"
+        welcome_message = f"Добро пожаловать, {user['username']}! "
+
 
     return render_template('main.html', image_url=None, welcome_message=welcome_message)
 
@@ -117,6 +120,7 @@ def main():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
+    flash('Вы успешно вышли из системы', 'info')
     return redirect(url_for('login'))
 
 
@@ -133,14 +137,19 @@ def upload():
         return redirect(url_for('login'))
 
     if 'photo' not in request.files:
-        return 'Не найден файл'
+        flash('Не найден файл', 'error')
+        return redirect(url_for('main'))
 
     file = request.files['photo']
     if file.filename == '':
-        return 'Не выбран файл'
+        flash('Не выбран файл', 'error')
+        return redirect(url_for('main'))
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
+        # Создаем папку uploads, если ее нет
+        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+            os.makedirs(app.config['UPLOAD_FOLDER'])
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         # Получаем информацию о пользователе для отображения
@@ -150,18 +159,20 @@ def upload():
 
         if user:
             created_at = datetime.strptime(user['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y %H:%M')
-            welcome_message = f"Добро пожаловать, {user['username']}! Ваш аккаунт создан {created_at}"
+            welcome_message = f"Добро пожаловать, {user['username']}! "
         else:
             welcome_message = f"Добро пожаловать, {session['username']}!"
+
 
         return render_template(
             'main.html',
             image_url=url_for('static', filename=os.path.join('uploads', filename)),
-            welcome_message=welcome_message
+            welcome_message=welcome_message,
+            uploaded_image=filename
         )
 
-    return 'Недопустимый файл'
-
+    flash('Недопустимый формат файла', 'error')
+    return redirect(url_for('main'))
 
 if __name__ == '__main__':
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
